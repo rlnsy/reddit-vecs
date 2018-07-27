@@ -49,6 +49,6 @@ for subreddit in reddit.subreddits.default(limit=100):
     print "subreddits downloaded: " + str(subs_done)
 
 # write data to file
-file = open('word.txt','wb')
+file = open('data/word.txt','wb')
 pickle.dump(data,file)
 file.close()

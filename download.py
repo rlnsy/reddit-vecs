@@ -41,7 +41,6 @@ for subreddit in reddit.subreddits.default(limit=100):
     for comment in subreddit.comments(limit=1000):
         content = unicodedata.normalize('NFKD', comment.body).encode('ascii','ignore')
         words = clean(str(content))
-        print words
         data[sub_name] = data[sub_name] + words
         coms_done = coms_done + 1
     print "comments downloaded in last sub: " + str(coms_done)

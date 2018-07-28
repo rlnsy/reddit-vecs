@@ -33,7 +33,7 @@ front_page = reddit.front.top(time_filter='week');
 
 subs_done = 0;
 # todo: run over all subs
-for subreddit in reddit.subreddits.default(limit=100):
+for subreddit in reddit.subreddits.default(limit=10):
     sub_name = subreddit.display_name;
     print "downloading subreddit r/" + sub_name
     data[sub_name] = []

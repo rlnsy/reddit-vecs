@@ -51,18 +51,24 @@ def vocab_intersect(words, vocab):
     return count
 
 # count words in vocab accross subreddits and create
-# count vectors
-def load_feature_set(content, vocab):
+# count data
+def load_count_set(content, vocab):
     data = {}
     labels = []
     for sub in content:
         count = vocab_intersect(content[sub],vocab)
         data[sub] = count
         labels.append(sub)
-    feature_set = pd.DataFrame(data,columns=labels)
-    return feature_set
+    count_set = pd.DataFrame(data,columns=labels)
+    return count_set
 
-def save_to_excel(df,name):
+def normalize(counts):
+    means = counts.mean(axis=0)
+    ranges = counts.max(axis=0) - counts.min(axis=0)
+    features = (counts - means) / ranges
+    return features
+
+def save_excel(df,name):
     from pandas import ExcelWriter
     writer = ExcelWriter(name)
     df.to_excel(writer,'Sheet1')
@@ -78,8 +84,13 @@ all_words = pickle.load(file)
 
 vocab_data = load_vocabulary(all_words, 1000)
 
-data = load_feature_set(all_words,vocab_data['vocab'])
+vocab_store = pd.Series(vocab_data['counts'],vocab_data['vocab'])
+save_excel(vocab_store,'data/vocab.xlsx')
 
-save_to_excel(data,'data/data.xlsx')
+count_set = load_count_set(all_words,vocab_data['vocab'])
+save_excel(count_set,'data/counts.xlsx')
+
+feature_set = normalize(count_set)
+save_excel(feature_set,'data/data.xlsx')
 
 print "done"

@@ -3,4 +3,4 @@ client.py
 client.pyc
 data/*
 .idea/*
-notebook/*
+journal/.ipynb_checkpoints/*

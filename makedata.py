@@ -37,7 +37,7 @@ def load_vocabulary(content, size):
     # create final data
     final_counts = pd.Series(counts_sized,vocab_sized)
 
-    return {'counts': counts_sized, 'vocab': vocab_sized}
+    return {'counts': counts_sized, 'words': vocab_sized}
 
 def vocab_intersect(words, vocab):
     count = [0] * len(vocab)
@@ -63,9 +63,9 @@ def load_count_set(content, vocab):
     return count_set
 
 def normalize(counts):
-    means = counts.mean(axis=0)
-    ranges = counts.max(axis=0) - counts.min(axis=0)
-    features = (counts - means) / ranges
+    means = counts.mean(axis=1)
+    ranges = counts.max(axis=1) - counts.min(axis=1)
+    features = counts.sub(means,axis=0).div(ranges,axis=0)
     return features
 
 def save_excel(df,name):
@@ -84,10 +84,10 @@ all_words = pickle.load(file)
 
 vocab_data = load_vocabulary(all_words, 1000)
 
-vocab_store = pd.Series(vocab_data['counts'],vocab_data['vocab'])
-save_excel(vocab_store,'data/vocab.xlsx')
+vocab = pd.DataFrame(vocab_data,columns=['words','counts'])
+save_excel(vocab,'data/vocab.xlsx')
 
-count_set = load_count_set(all_words,vocab_data['vocab'])
+count_set = load_count_set(all_words,vocab_data['words'])
 save_excel(count_set,'data/counts.xlsx')
 
 feature_set = normalize(count_set)

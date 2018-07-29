@@ -4,6 +4,9 @@
 # Downloads words from comments across subs and
 # and stores as a file-encoded dictionary
 
+# Options [#subreddits, #comments]
+
+import sys
 import praw
 import pickle
 import client
@@ -33,12 +36,12 @@ front_page = reddit.front.top(time_filter='week');
 
 subs_done = 0;
 # todo: run over all subs
-for subreddit in reddit.subreddits.default(limit=10):
+for subreddit in reddit.subreddits.default(limit=int(sys.argv[1])):
     sub_name = subreddit.display_name;
     print ('downloading subreddit r/' + sub_name)
     data[sub_name] = []
     coms_done = 0;
-    for comment in subreddit.comments(limit=1000):
+    for comment in subreddit.comments(limit=int(sys.argv[2])):
         content = unicodedata.normalize('NFKD', comment.body).encode('ascii','ignore')
         words = clean(str(content))
         data[sub_name] = data[sub_name] + words

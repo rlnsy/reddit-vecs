@@ -1,3 +1,4 @@
+import sys
 import pandas as pd
 
 # read content and return vocabulary of top
@@ -76,7 +77,7 @@ import pickle
 file = open('data/word.txt','rb')
 all_words = pickle.load(file)
 
-vocab_data = load_vocabulary(all_words, 1000)
+vocab_data = load_vocabulary(all_words, int(sys.argv[1]))
 
 vocab = pd.DataFrame(vocab_data,columns=['words','counts'])
 vocab.to_csv('data/vocab.csv',index=False)

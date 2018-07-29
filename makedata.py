@@ -68,29 +68,23 @@ def normalize(counts):
     features = counts.sub(means,axis=0).div(ranges,axis=0)
     return features
 
-def save_excel(df,name):
-    from pandas import ExcelWriter
-    writer = ExcelWriter(name)
-    df.to_excel(writer,'Sheet1')
-    writer.save()
-
-print "generating dataset from content..."
+print ('generating dataset from content...')
 
 import pickle
 
 # load downloaded words
-file = open('data/word.txt','r')
+file = open('data/word.txt','rb')
 all_words = pickle.load(file)
 
 vocab_data = load_vocabulary(all_words, 1000)
 
 vocab = pd.DataFrame(vocab_data,columns=['words','counts'])
-save_excel(vocab,'data/vocab.xlsx')
+vocab.to_csv('data/vocab.csv',index=False)
 
 count_set = load_count_set(all_words,vocab_data['words'])
-save_excel(count_set,'data/counts.xlsx')
+count_set.to_csv('data/counts.csv',index=False)
 
 feature_set = normalize(count_set)
-save_excel(feature_set,'data/data.xlsx')
+feature_set.to_csv('data/data.csv',index=False)
 
-print "done"
+print ('done')

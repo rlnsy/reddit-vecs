@@ -23,8 +23,8 @@ def clean(content):
     format = re.compile('[a-z]+',re.IGNORECASE) # single word format
     wds = format.findall(content)
     wds = filter(lambda w: len(w) >= 2, wds)
-    wds = map(lambda w: w.lower(), wds)
-    wds = map(lambda w: stem(w), wds)
+    wds = list(map(lambda w: w.lower(), wds))
+    wds = list(map(lambda w: stem(w), wds))
     return wds
 
 data = {};
@@ -35,7 +35,7 @@ subs_done = 0;
 # todo: run over all subs
 for subreddit in reddit.subreddits.default(limit=10):
     sub_name = subreddit.display_name;
-    print "downloading subreddit r/" + sub_name
+    print ('downloading subreddit r/' + sub_name)
     data[sub_name] = []
     coms_done = 0;
     for comment in subreddit.comments(limit=1000):
@@ -43,9 +43,9 @@ for subreddit in reddit.subreddits.default(limit=10):
         words = clean(str(content))
         data[sub_name] = data[sub_name] + words
         coms_done = coms_done + 1
-    print "comments downloaded in last sub: " + str(coms_done)
+    print ('comments downloaded in last sub: ' + str(coms_done))
     subs_done = subs_done + 1
-    print "subreddits downloaded: " + str(subs_done)
+    print ('subreddits downloaded: ' + str(subs_done))
 
 # write data to file
 file = open('data/word.txt','wb')

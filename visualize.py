@@ -1,8 +1,8 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 
-count_set = pd.read_excel('data/counts.xlsx')
-feature_set = pd.read_excel('data/data.xlsx')
+count_set = pd.read_csv('data/counts.csv')
+feature_set = pd.read_csv('data/data.csv')
 
 count_set.plot(stacked=False)
 

@@ -49,7 +49,7 @@ def compute_cost():
     for i in range(0,m):
         distort = np.power(linalg.norm(X[i,:] - centroids[assign[i]]),2)
         cost_sum = cost_sum + distort
-    return cost_sum
+    return cost_sum / m
 
 # K value analysis
 k_max = 20

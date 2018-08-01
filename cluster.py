@@ -5,7 +5,7 @@ from scipy import linalg
 
 feature_set = pd.read_csv('data/data.csv')
 
-# TODO: make sure K-means imlementation is correct
+# TODO: make sure K-means imlementation is correct or use built-in
 def run_clustering(k):
     X = np.transpose(feature_set.values)
     m = X.shape[0]

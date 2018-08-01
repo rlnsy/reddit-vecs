@@ -48,10 +48,13 @@ def plot_reductions_2d(vecs):
     plt.legend()
     plt.show()
 
-def plot_clusters():
-    color_map = {}
-    color_map['colors']=['tab:blue', 'tab:orange', 'tab:green', 'tab:red', 'tab:purple', 'tab:brown', 'tab:pink', 'tab:gray', 'tab:olive', 'tab:cyan']
-    cluster_assigns = pd.read_csv('data/assign.csv')
+def plot_reductions_all(vecs):
+    x = vecs[:,0]
+    y = vecs[:,1]
+    plt.scatter(x,y,c='b',cmap='plasma')
+    plt.show()
+
+# TODO: write code to find out what subreddits the outliers are
 
 vecs_reduce = dim_reduce(2)
-plot_reductions_2d(vecs_reduce)
+plot_reductions_all(vecs_reduce)

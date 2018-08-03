@@ -48,13 +48,23 @@ def plot_reductions_2d(vecs):
     plt.legend()
     plt.show()
 
-def plot_reductions_all(vecs):
+def plot_reductions_all_2d(vecs):
     x = vecs[:,0]
     y = vecs[:,1]
     plt.scatter(x,y,c='b',cmap='plasma')
+    for i, name in enumerate(feature_set.columns):
+        plt.annotate(name,(x[i],y[i]))
     plt.show()
 
-# TODO: write code to find out what subreddits the outliers are
+def plot_reductions_all_3d(vecs):
+    x = vecs[:,0]
+    y = vecs[:,1]
+    z = vecs[:,2]
+    ax = plt.axes(projection='3d')
+    ax.scatter(x,y,z,c='b',cmap='plasma')
+    for i, name in enumerate(feature_set.columns):
+        ax.annotate(name,(x[i],y[i]))
+    plt.show()
 
-vecs_reduce = dim_reduce(2)
-plot_reductions_all(vecs_reduce)
+vecs_reduce = dim_reduce(3)
+plot_reductions_all_3d(vecs_reduce)

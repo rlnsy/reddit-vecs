@@ -3,6 +3,7 @@
 import praw
 import pickle
 import unicodedata
+import codecs
 import client
 
 reddit = praw.Reddit(client_id=client.id(),
@@ -14,14 +15,15 @@ files = []
 for subreddit in reddit.subreddits.default(limit=100):
     name = subreddit.display_name
     print('downloading r/' + name + '...')
-    files.append(name +'.txt');
+    files.append('data/' + name +'.txt');
     content = ''
     for comment in subreddit.comments(limit=500):
         content = content + str(unicodedata.normalize('NFKD', comment.body).encode('ascii','ignore'))
     print('saving to file')
-    file = open('data/' +  name + '.txt','wb')
-    pickle.dump(content,file)
+    file = codecs.open('data/' + name + '.txt', 'w', 'utf-8')
+    file.write(content)
     file.close()
+
 files_store = open('data/files.pickle','wb')
 pickle.dump(files,files_store)
 files_store.close()

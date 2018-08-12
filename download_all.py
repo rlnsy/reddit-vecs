@@ -30,6 +30,7 @@ sub_names = subs_info['name'].values
 print('Downloading subreddit content...')
 sub_files = []
 names_downloaded = []
+subscriber_counts = []
 for i, name in enumerate(sub_names[0:1000]):
     try:
         print('downloading r/' + name + '...')
@@ -44,6 +45,7 @@ for i, name in enumerate(sub_names[0:1000]):
         # if no errors thrown in previous code
         names_downloaded.append(name)
         sub_files.append('data/subs_all/' + name +'.txt')
+        subscriber_counts.append(subs_info['subscribers'].values[i]) #TODO: test this
         print('downloaded: ' + str(len(names_downloaded)))
     except ResponseException:
         print('subreddit skipped')

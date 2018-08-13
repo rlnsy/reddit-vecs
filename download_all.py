@@ -13,7 +13,7 @@ reddit = praw.Reddit(client_id=client.id(),
                      password=client.pword(),
                      user_agent='sub-analysis-scraper by u/snewapp', username=client.uname())
 
-subs_info = pd.read_csv('data/subreddits_basic.csv',delimiter=',',usecols=[3,4],names=['name','subscribers'])
+subs_info = pd.read_csv('data/subreddits_basic.csv',usecols=[3,4],names=['name','subscribers'])
 
 # convert subscriber entries to int
 def convert_val(val):

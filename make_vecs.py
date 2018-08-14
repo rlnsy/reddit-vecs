@@ -1,6 +1,6 @@
 # CONTENT VECTORIZER
 # uses TFIDF vectorization techniques to produce hight dimensionl content vectors
-# and then reduces them using t-SNE. Saved in data/vecs.csv
+# and then reduces them using t-SNE. Saved in relative vecs.csv
 # ARGUMENTS: content_directory (dir to read files from - must contain content
 #   and reference files)
 
@@ -25,4 +25,4 @@ subscriber_counts_store = open(content_dir + '/subscribers.pickle','rb')
 subscriber_counts = pickle.load(subscriber_counts_store)
 data = {'name':names, 'x':vecs_2d[:,0], 'y':vecs_2d[:,1], 'subscribers': subscriber_counts}
 df = pd.DataFrame(data,columns=['name','x','y','subscribers'])
-df.to_csv('data/vecs.csv', encoding='utf-8',columns=['name','x','y','subscribers'], index=False)
+df.to_csv(content_dir + '/vecs.csv', encoding='utf-8',columns=['name','x','y','subscribers'], index=False)

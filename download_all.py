@@ -2,7 +2,8 @@
 
 # PRAW SUBREDDIT CONTENT DOWNLOADER
 # stores content text in files and stores a list of the files for reference
-# ARGUMENTS: num_subreddits, num_comments_per_subreddit, filter nsfw subreddits (bool string)
+# ARGUMENTS: num_subreddits, num_comments_per_subreddit,
+# filter_nsfw_subreddits (bool string), output_dir
 
 import sys
 import praw
@@ -37,6 +38,7 @@ sub_names = subs_info['name'].values
 subs_limit = int(sys.argv[1])
 comment_limit = int(sys.argv[2])
 filter_nsfw = sys.argv[3].lower()
+out_dir = sys.argv[4]
 
 # download the content
 print('Downloading subreddit content...')
@@ -55,13 +57,17 @@ for i, name in enumerate(sub_names[0:subs_limit]):
                 content = content + str(unicodedata.normalize('NFKD', comment.body).encode('ascii','ignore'))
             # save content
             print('saving to file')
-            file = codecs.open('data/subs_all/' + name + '.txt', 'w', 'utf-8')
+            file = codecs.open(out_dir + '/' + name + '.txt', 'w', 'utf-8')
             file.write(content)
             file.close()
             # if no responese error thrown in previous code
-            names_downloaded.append(name)
-            sub_files.append('data/subs_all/' + name +'.txt')
-            subscriber_counts.append(subs_info['subscribers'].values[i])
+            try:
+                names_downloaded.append(name)
+                sub_files.append(out_dir + '/' + name + '.txt')
+                subscriber_counts.append(subs_info['subscribers'].values[i])
+            except FileNotFoundError:
+                print('please create output directory')
+                break;
         else:
             print('skipping nsfw subreddit')
             skipped = skipped + 1
@@ -71,12 +77,16 @@ for i, name in enumerate(sub_names[0:subs_limit]):
         skipped = skipped + 1
 
 # save the reference lists
-files_store = open('data/sub_files_all.pickle','wb')
+files_store = open(out_dir + '/files.pickle','wb')
 pickle.dump(sub_files,files_store)
 files_store.close()
 
-names_store = open('data/sub_names_all.pickle','wb')
+names_store = open(out_dir + '/names.pickle','wb')
 pickle.dump(names_downloaded,names_store)
 files_store.close()
+
+subscribers_store = open(out_dir + '/subscribers.pickle','wb')
+pickle.dump(subscriber_counts, subscribers_store)
+subscribers_store.close()
 
 print('subreddits downloaded: ' + str(len(names_downloaded)) + '; skipped: ' + str(skipped))

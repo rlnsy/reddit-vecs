@@ -50,11 +50,16 @@ for i, name in enumerate(sub_names[0:subs_limit]):
     try:
         subreddit = reddit.subreddit(name)
         if((subreddit.over18 is False) or (filter_nsfw == 'false')):
-            print('downloading r/' + name + '...')
+            print('getting r/' + name + '...')
             content = ''
+            comment_count = 0
             for comment in reddit.subreddit(name).comments(limit=comment_limit):
                 # 200 normalize and properly encode
-                content = content + str(unicodedata.normalize('NFKD', comment.body).encode('ascii','ignore'))
+                this_content = str(unicodedata.normalize('NFKD', comment.body).encode('ascii','ignore'))
+                print(this_content)
+                content = content + this_content
+                comment_count = comment_count + 1
+            print('found ' + str(comment_count) + ' comments.')
             # save content
             print('saving to file')
             file = codecs.open(out_dir + '/' + name + '.txt', 'w', 'utf-8')

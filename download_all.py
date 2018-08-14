@@ -62,17 +62,18 @@ for i, name in enumerate(sub_names[0:subs_limit]):
             print('found ' + str(comment_count) + ' comments.')
             # save content
             print('saving to file')
-            file = codecs.open(out_dir + '/' + name + '.txt', 'w', 'utf-8')
+
+            try:
+                file = codecs.open(out_dir + '/' + name + '.txt', 'w', 'utf-8')
+            except FileNotFoundError:
+                sys.exit("aborted - please create output directory")
+
+            # dirdctory is valid at this point
             file.write(content)
             file.close()
-            # if no responese error thrown in previous code
-            try:
-                names_downloaded.append(name)
-                sub_files.append(out_dir + '/' + name + '.txt')
-                subscriber_counts.append(subs_info['subscribers'].values[i])
-            except FileNotFoundError:
-                print('please create output directory')
-                break;
+            names_downloaded.append(name)
+            sub_files.append(out_dir + '/' + name + '.txt')
+            subscriber_counts.append(subs_info['subscribers'].values[i])
         else:
             print('skipping nsfw subreddit')
             skipped = skipped + 1

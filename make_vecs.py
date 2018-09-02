@@ -32,7 +32,6 @@ subscriber_counts_store = open(content_dir + '/subscribers.pickle','rb')
 subscriber_counts = pickle.load(subscriber_counts_store)
 
 data = {'name':names,'subscribers': subscriber_counts}
-data_reduce = pd.DataFrame(data,columns=['name','subscribers'])
 
 # save the sparse data matrix
 data_all = pd.DataFrame(data,columns=['name','subscribers'])

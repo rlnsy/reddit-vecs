@@ -4,8 +4,9 @@
 The python scripts for this project can be used to download and vectorize subreddit data. They require the standard numerical computing libraries in the Anaconda environment as well as a handful of other packages for content processing. The code has been tested on python 3.6. Note that the downloader makes use of a pre-made dataset for subreddit lists which can be downloaded [here](https://www.reddit.com/r/datasets/comments/8isnek/list_of_every_subreddit_on_reddit/).
 
 Files:
-* [download_all.py](../master/download_all.py): Subreddit content scraper (See file for details)
+* [download.py](../master/download.py): Subreddit content scraper (See file for details)
 * [make_vecs.py](../master/make_vecs.py): Content vectorizer (See file for details)
+* [visualize.py](../master/visualize.py): Tool for dimensionality reduction and plotting (See file for details)
 
 ## Progress
 ### Experimentation

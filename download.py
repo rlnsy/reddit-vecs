@@ -1,11 +1,6 @@
 #! /usr/bin/python
 
-# PRAW SUBREDDIT CONTENT DOWNLOADER
-# stores content text in files and stores a list of the files for reference
-# ARGUMENTS: num_subreddits, num_comments_per_subreddit,
-# filter_nsfw_subreddits (bool string), output_dir
-
-import sys
+import argparse
 import praw
 import pickle
 import unicodedata
@@ -13,6 +8,18 @@ import codecs
 import client
 import pandas as pd
 from prawcore.exceptions import ResponseException
+
+parser = argparse.ArgumentParser()
+parser.add_argument("-s", "--subs", \
+help="max number of subs to download", required=False, default=50)
+parser.add_argument("-c", "--comments", \
+help="max number of comments to download", required=False, default=50)
+parser.add_argument("-f", "--filter_nsfw", \
+help="whether or not to filter nsfw communities", required=False, default="True")
+parser.add_argument("-o", "--output", \
+help="output directory (should be an empty folder)", required=True)
+
+args = vars(parser.parse_args())
 
 # set up the API client
 reddit = praw.Reddit(client_id=client.id(),
@@ -35,10 +42,10 @@ subs_info['subscribers'] = subs_info['subscribers'].apply(lambda x: convert_val(
 subs_info = subs_info.sort_values('subscribers',ascending=False)
 sub_names = subs_info['name'].values
 
-subs_limit = int(sys.argv[1])
-comment_limit = int(sys.argv[2])
-filter_nsfw = sys.argv[3].lower()
-out_dir = sys.argv[4]
+subs_limit = args['subs']
+comment_limit = args['comments']
+filter_nsfw = args['filter_nsfw']
+out_dir = args['output']
 
 # download the content
 print('Downloading subreddit content...')

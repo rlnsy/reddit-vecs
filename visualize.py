@@ -1,23 +1,30 @@
-# Reduces and plots vectors
-# AGUMENTS: Vectors filename
-# reduction_dimension (dimension of reduced vectors, default=2)
-# (Optional) Output file to save vecs
+#! /usr/bin/python
 
-import sys
+
+import argparse
 import pandas as pd
 import numpy as np
 from sklearn.manifold import TSNE
 
-vecs_file = (sys.argv[1])
+parser = argparse.ArgumentParser()
+parser.add_argument("-i", "--vecs", \
+help="high-dim vectors to be reduced; in a file", required=True)
+parser.add_argument("-n", "--dim", \
+help="number of dimensions in reduced form", required=False, default=2)
+parser.add_argument("-c", "--clusters",\
+help="point cluster assignments; in a file", required=False, default="")
+parser.add_argument("-o", "--output",\
+help="location to store vectors", required=False, default="")
 
-red_dim = 2
+args = vars(parser.parse_args())
 
-# check dimension values
-try:
-    red_dim = int(sys.argv[2])
-except IndexError:
-    print('No dimension specified; using n=2')
+#vecs_file = (sys.argv[1])
+vecs_file = args['vecs']
+red_dim = int(args['dim'])
+cluster_file = args['clusters']
+vecs_out = args['output']
 
+# constrain dimension
 if red_dim < 1:
     red_dim = 2
 elif red_dim > 3:
@@ -37,8 +44,7 @@ dists = np.dot(vecs, vecs.T)
 vecs_reduce = TSNE(n_components=red_dim).fit_transform(dists)
 
 # saving reductions
-try:
-    vecs_out = sys.argv[3]
+if vecs_out != "":
     print('saving reduced data...')
     data = {'name':names,'subscribers': subscribers}
     data_reduce = pd.DataFrame(data,columns=['name','subscribers'])
@@ -58,13 +64,29 @@ try:
         data_reduce['z'] = vecs_reduce[:,2]
         data_reduce.to_csv(vecs_out, encoding='utf-8',\
         columns=['name','subscribers','x','y','z'], index=False)
-except IndexError:
-    print('No output provided, vectors will not be saved')
 
 import plotly.graph_objs as go
 from plotly.offline import download_plotlyjs, plot
 
 print('plotting...')
+
+plot_colors = subscribers
+
+if (cluster_file != ''):
+    print('found cluster assignments')
+    clusters = pd.read_csv(cluster_file)['cluster'] # assume same order
+
+    color_map = {
+    0.0: '#e6f2ff', 1.0: '#99ccff',
+    2.0: '#ccccff', 3.0: '#cc99ff',
+    4.0: '#ff99ff', 5.0: '#ff6699',
+    6.0: '#ff9966', 7.0: '#ff6600',
+    8.0: '#ff5050', 9.0: '#ff0000',
+    10.0: '#18ff01', 11.0: '#6a2b11',
+    12.0: '#b7bf05', 13.0: '#2859c1'}
+    # supports up to 14 clusters
+
+    plot_colors = clusters.map(color_map)
 
 if (red_dim == 2):
     plot([go.Scatter(
@@ -73,7 +95,7 @@ if (red_dim == 2):
         mode = 'markers',
         marker = dict(
             size = 6,
-            color = subscribers,
+            color = plot_colors,
             colorscale='magma',
             showscale=True
         ),
@@ -87,7 +109,7 @@ elif (red_dim == 3):
         mode = 'markers',
         marker = dict(
             size = 6,
-            color = subscribers,
+            color = plot_colors,
             colorscale='magma',
             showscale=True
         ),

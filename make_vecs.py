@@ -1,14 +1,11 @@
-# CONTENT VECTORIZER
-# uses TFIDF vectorization techniques to produce hight dimensionl content vectorsself.
-# Saved in relative data.csv
-# ARGUMENTS: content_directory (dir to read files from - must contain content
-#   and reference files),
-
-import sys
+import argparse
 import pickle
 from sklearn.feature_extraction.text import TfidfVectorizer
 
-content_dir = sys.argv[1]
+parser = argparse.ArgumentParser()
+parser.add_argument("-i", "--dir", \
+help="content directory", required=True)
+content_dir = vars(parser.parse_args())['dir']
 
 print('Vectorizing content from ' + content_dir)
 
@@ -17,11 +14,6 @@ files_list = pickle.load(files_store)
 vectorizer = TfidfVectorizer(input='filename',stop_words='english',lowercase=True,\
 strip_accents='unicode', smooth_idf=True,sublinear_tf=False, use_idf=True, ngram_range=(1,2),min_df=2)
 vecs_all = vectorizer.fit_transform(files_list).todense()
-
-print(vecs_all.shape)
-
-import time
-time.sleep(10000000)
 
 # save the data
 import pandas as pd

@@ -13,6 +13,8 @@ parser.add_argument("-n", "--dim", \
 help="number of dimensions in reduced form", required=False, default=2)
 parser.add_argument("-c", "--clusters",\
 help="point cluster assignments; in a file", required=False, default="")
+parser.add_argument("-r", "--reduce",\
+help="whether or not to reduce input before plotting", required=False, default="true")
 parser.add_argument("-o", "--output",\
 help="location to store vectors", required=False, default="")
 
@@ -22,6 +24,7 @@ args = vars(parser.parse_args())
 vecs_file = args['vecs']
 red_dim = int(args['dim'])
 cluster_file = args['clusters']
+reduce_input = args['reduce'] == 'true'
 vecs_out = args['output']
 
 # constrain dimension
@@ -30,8 +33,6 @@ if red_dim < 1:
 elif red_dim > 3:
     red_dim = 3
 
-print('Reducing vectors in ' + vecs_file + ' with n=' + str(red_dim));
-
 vecs_df = pd.read_csv(vecs_file)
 subscribers = vecs_df['subscribers']
 names = vecs_df['name']
@@ -39,31 +40,35 @@ names = vecs_df['name']
 vecs_df.drop('subscribers', 1, inplace=True)
 vecs_df.drop('name', 1, inplace=True)
 vecs = vecs_df.values
+vecs_reduce = vecs
 
-dists = np.dot(vecs, vecs.T)
-vecs_reduce = TSNE(n_components=red_dim).fit_transform(dists)
+if (reduce_input):
+    print('Reducing vectors in ' + vecs_file + ' with n=' + str(red_dim));
 
-# saving reductions
-if vecs_out != "":
-    print('saving reduced data...')
-    data = {'name':names,'subscribers': subscribers}
-    data_reduce = pd.DataFrame(data,columns=['name','subscribers'])
+    dists = np.dot(vecs, vecs.T)
+    vecs_reduce = TSNE(n_components=red_dim).fit_transform(dists)
 
-    if red_dim == 1:
-        data_reduce['x'] = vecs_reduce[:,0]
-        data_reduce.to_csv(vecs_out, encoding='utf-8',\
-        columns=['name','subscribers','x'], index=False)
-    elif red_dim == 2:
-        data_reduce['x'] = vecs_reduce[:,0]
-        data_reduce['y'] = vecs_reduce[:,1]
-        data_reduce.to_csv(vecs_out, encoding='utf-8',\
-        columns=['name','subscribers','x','y'], index=False)
-    elif red_dim == 3:
-        data_reduce['x'] = vecs_reduce[:,0]
-        data_reduce['y'] = vecs_reduce[:,1]
-        data_reduce['z'] = vecs_reduce[:,2]
-        data_reduce.to_csv(vecs_out, encoding='utf-8',\
-        columns=['name','subscribers','x','y','z'], index=False)
+    # saving reductions
+    if vecs_out != "":
+        print('saving reduced data...')
+        data = {'name':names,'subscribers': subscribers}
+        data_reduce = pd.DataFrame(data,columns=['name','subscribers'])
+
+        if red_dim == 1:
+            data_reduce['x'] = vecs_reduce[:,0]
+            data_reduce.to_csv(vecs_out, encoding='utf-8',\
+            columns=['name','subscribers','x'], index=False)
+        elif red_dim == 2:
+            data_reduce['x'] = vecs_reduce[:,0]
+            data_reduce['y'] = vecs_reduce[:,1]
+            data_reduce.to_csv(vecs_out, encoding='utf-8',\
+            columns=['name','subscribers','x','y'], index=False)
+        elif red_dim == 3:
+            data_reduce['x'] = vecs_reduce[:,0]
+            data_reduce['y'] = vecs_reduce[:,1]
+            data_reduce['z'] = vecs_reduce[:,2]
+            data_reduce.to_csv(vecs_out, encoding='utf-8',\
+            columns=['name','subscribers','x','y','z'], index=False)
 
 import plotly.graph_objs as go
 from plotly.offline import download_plotlyjs, plot
@@ -76,15 +81,15 @@ if (cluster_file != ''):
     print('found cluster assignments')
     clusters = pd.read_csv(cluster_file)['cluster'] # assume same order
 
-    color_map = {
-    0.0: '#e6f2ff', 1.0: '#99ccff',
-    2.0: '#ccccff', 3.0: '#cc99ff',
-    4.0: '#ff99ff', 5.0: '#ff6699',
-    6.0: '#ff9966', 7.0: '#ff6600',
-    8.0: '#ff5050', 9.0: '#ff0000',
-    10.0: '#18ff01', 11.0: '#6a2b11',
-    12.0: '#b7bf05', 13.0: '#2859c1'}
-    # supports up to 14 clusters
+    num_clusters = len(np.unique(clusters.values))
+
+    import random
+    def gen_hex_colour_code():
+        return ''.join([random.choice('0123456789ABCDEF') for x in range(6)])
+
+    color_map = {}
+    for c in range(0,num_clusters):
+        color_map[float(c)] = gen_hex_colour_code()
 
     plot_colors = clusters.map(color_map)
 
